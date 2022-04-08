@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
+/* 
+Jonas de Boer 098318
+Pim Breugem 0992420
+ */
+
 namespace Assignment
 {
     class Program

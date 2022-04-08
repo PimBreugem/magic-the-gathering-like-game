@@ -3,6 +3,11 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
+/* 
+Jonas de Boer 098318
+Pim Breugem 0992420
+ */
+
 namespace Assignment
 {
     public class Board {
