@@ -32,8 +32,6 @@ namespace Assignment
         {
             if (!Used)
             {
-                PlayerType.ONE => Player1.Permanents,
-                PlayerType.TWO => Player2.Permanents,
                 Used = true;
                 return new Dictionary<CardColor, int> { { Land.Color, 1 } };
             }
