@@ -29,6 +29,44 @@ namespace Assignment
 
 			}
 		}
+
+		public void PlayerTurn(PlayerType playerType)
+        {
+			Player CurrentPlayer = (PlayerOne.Type == playerType ? PlayerOne : PlayerTwo);
+
+			// Preparation
+			foreach(Land land in CurrentPlayer.Lands) { land.Reset(); } //Reset all lands
+			foreach(PermanentOnField permanentOnField in CurrentPlayer.Permanents) // Reset all the the states of permanents
+			{
+				permanentOnField.Attack = permanentOnField.Permanent.Attack;
+				permanentOnField.Defence = permanentOnField.Permanent.Defence;
+				permanentOnField.AppliedEffects = null;
+				permanentOnField.Permanent.CanDefend = true;
+
+				// Check all effects
+				foreach(Effect effect in permanentOnField.Permanent.Effects) // Check if all the permanent's effects are still valid: use case can be that when a permanent spaws the first 3 turns it has a buff
+                {
+					if(effect.Duration != null || effect.Duration-- <= 0)
+                    {
+						permanentOnField.Permanent.Effects.Remove(effect);
+                    }
+                }
+			}
+			foreach(PermanentOnField permanentOnField in CurrentPlayer.Permanents) // Add all the effects of each permanent to the field
+            {
+				foreach(Effect effect in permanentOnField.Permanent.Effects)
+                {
+					if(effect.PermanentAction != null)
+                    {
+						// Run effect on all permanent in the field including the other players
+
+                    }
+                }
+            }
+
+
+        }
+
 		public Boolean CheckDeckRules(string playerName, List<ICard> deck)
         {
 			Console.WriteLine($"Checking the deck of {playerName}...");

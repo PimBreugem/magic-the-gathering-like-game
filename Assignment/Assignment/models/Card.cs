@@ -29,7 +29,6 @@ namespace Assignment
         {
             Name = name;
             Color = color;
-            AppliedEffects = new List<AppliedEffects>();
         }
         // Personal properties
         public bool Used { get; set; }
@@ -50,7 +49,6 @@ namespace Assignment
     public interface ISpell : ICard
     {
         int Cost { get; set; }
-        Effect ActivationEffect { get; set; }
 
     }
 
@@ -61,7 +59,6 @@ namespace Assignment
         public int Cost { get; set; }
         public List<Effect> Effects { get; set; }
         public Effect ActivationEffect { get; set; }
-        public List<Effect> AppliedEffects { get; set; }
         public int Defence { get; set; }
         public int Attack { get; set; }
         public bool CanDefend { get; set; }
@@ -76,7 +73,6 @@ namespace Assignment
             Defence = def;
             Attack = att;
             CanDefend = true;
-            AppliedEffects = new List<Effect>();
         }
     }
 
@@ -100,27 +96,31 @@ namespace Assignment
 
     public class Effect
     {
-        public int Duration { get; set; }
+        public int? Duration { get; set; }
+        public Boolean TargetOtherPlayer { get; set;}
         public Func<Permanent> PermanentAction { get; set; }
         public Func<Player> PlayerAction { get; set; }
         public Func<Land> LandAction { get; set; }
 
-        public Effect(int duration, Func<Permanent> permanentAction)
+        public Effect(int duration, Func<Permanent> permanentAction, Boolean targetOtherPlayer = false)
         {
             Duration = duration;
             PermanentAction = permanentAction;
+            TargetOtherPlayer = targetOtherPlayer;
         }
     
-        public Effect(int duration, Func<Player> playerAction)
+        public Effect(int duration, Func<Player> playerAction, Boolean targetOtherPlayer = false)
         {
             Duration = duration;
             PlayerAction = playerAction;
+            TargetOtherPlayer = targetOtherPlayer;
         }
 
-        public Effect(int duration, Func<Land> landAction)
+        public Effect(int duration, Func<Land> landAction, Boolean targetOtherPlayer = false)
         {
             Duration = duration;
             LandAction = landAction;
+            TargetOtherPlayer = targetOtherPlayer;
         }
     
     }
