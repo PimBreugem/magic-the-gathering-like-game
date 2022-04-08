@@ -16,9 +16,8 @@ namespace Assignment
         public List<Permanent> Permanents { get; set; }
         public List<Land> Lands { get; set; }
         public List<Effect> AppliedEffects { get; set; }
-        public Board BoardRef { get; set; }
 
-        public Player(string name, PlayerType type, int health, Stack<ICard> deck, Board board){
+        public Player(string name, PlayerType type, int health, Stack<ICard> deck){
             Name = name;
             Type = type;
             Energy = new Dictionary<CardColor,int>();
@@ -28,7 +27,6 @@ namespace Assignment
             DiscardPile = new Stack<ICard>();
             Permanents = new List<Permanent>();
             Lands = new List<Land>();
-            BoardRef = board;
             AppliedEffects = new List<Effect>();
             Draw(7);
         }
@@ -42,8 +40,7 @@ namespace Assignment
                 List<ICard> hand, 
                 Stack<ICard> discardPile, 
                 List<Permanent> permanents,
-                List<Land> lands,
-                Board board){
+                List<Land> lands){
             Name = name;
             Type = type;
             Energy = energy;
@@ -53,7 +50,6 @@ namespace Assignment
             DiscardPile = discardPile;
             Permanents = permanents;
             Lands = lands;
-            BoardRef = board;
             AppliedEffects = new List<Effect>();
         }
 
@@ -74,7 +70,7 @@ namespace Assignment
                 PlayInstantaneous((Instantaneous)card);
             }
             else { 
-                // permanent
+                PlayPermanent((Permanent)card);
             }
             Hand.Remove(card);
         }
@@ -130,7 +126,7 @@ namespace Assignment
 
         public Player WithEffects() 
         {
-            Player res = new Player(Name,Type,Energy,Health,Deck,Hand,DiscardPile,Permanents,Lands,Board);
+            Player res = new Player(Name,Type,Energy,Health,Deck,Hand,DiscardPile,Permanents,Lands);
             foreach(Effect e in AppliedEffects){
                 res = e.PlayerAction(res);
             }

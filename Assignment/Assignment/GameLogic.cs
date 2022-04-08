@@ -61,10 +61,6 @@ namespace Assignment
 
 			return true;
 		}
-
-		public void Demo(){
-			
-		}
 	}
 	public static class Extensions
     {

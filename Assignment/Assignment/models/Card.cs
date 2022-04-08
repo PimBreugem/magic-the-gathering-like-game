@@ -69,7 +69,7 @@ namespace Assignment
 
     public interface ISpell : ICard
     {
-        int Cost { get; set; }
+        Dictionary<CardColor,int> Cost { get; set; }
         Effect ActivationEffect { get; set; }
 
     }
@@ -78,7 +78,7 @@ namespace Assignment
     {
         public string Name { get; set; }
         public CardColor Color { get; set; }
-        public int Cost { get; set; }
+        public Dictionary<CardColor,int> Cost { get; set; }
         public List<Effect> Effects { get; set; }
         public Effect ActivationEffect { get; set; }
         public List<Effect> AppliedEffects { get; set; }
@@ -86,7 +86,7 @@ namespace Assignment
         public int Attack { get; set; }
         public bool CanDefend { get; set; }
 
-        public Permanent (string name, CardColor color, int cost, List<Effect> effect, Effect activationEffect, int def, int att)
+        public Permanent (string name, CardColor color, Dictionary<CardColor,int> cost, List<Effect> effect, Effect activationEffect, int def, int att)
         {
             Name = name;
             Color = color;
@@ -97,6 +97,19 @@ namespace Assignment
             Attack = att;
             CanDefend = true;
             AppliedEffects = new List<Effect>();
+        }
+
+        public Permanent (string name, CardColor color, Dictionary<CardColor,int> cost, List<Effect> effect, Effect activationEffect, int def, int att, bool canDefend, List<Effect> appliedEffects)
+        {
+            Name = name;
+            Color = color;
+            Cost = cost;
+            Effects = effect;
+            ActivationEffect = activationEffect;
+            Defence = def;
+            Attack = att;
+            CanDefend = canDefend;
+            AppliedEffects = appliedEffects;
         }
 
         public Permanent WithEffects(){
@@ -116,10 +129,10 @@ namespace Assignment
     { 
         public string Name { get; set; }
         public CardColor Color { get; set; }
-        public int Cost { get; set; }
+        public Dictionary<CardColor,int> Cost { get; set; }
         public Effect ActivationEffect { get; set; }
 
-        public Instantaneous(string name, CardColor color, int cost, Effect activationEffect) 
+        public Instantaneous(string name, CardColor color, Dictionary<CardColor,int> cost, Effect activationEffect) 
         {
             Name = name;
             Color = color;
