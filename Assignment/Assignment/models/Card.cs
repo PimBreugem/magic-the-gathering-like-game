@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Assignment
 {
-    enum CardColor {
+    public enum CardColor {
         RED,
         WHITE,
         GREEN,
@@ -13,17 +13,21 @@ namespace Assignment
         BROWN,
         NONE
     }
-    interface ICard
+    public interface ICard
     {
-        int Id { get; set; }
-        CardColor Color { get; set; }
+        public int Id { get; set; }
+        public CardColor Color { get; set; }
+        public PlayerType player { get; set; }
     }
 
     class Land: ICard
     {
+        // Card properties
         public int Id { get; set; }
         public CardColor Color { get; set; }
+        public PlayerType player { get; set; }
 
+        // Personal properties
         public bool Used { get; set; }
 
         public int Use() {
@@ -73,11 +77,16 @@ namespace Assignment
 
     class Permanent : ISpell
     {
+        // Card properties
         public int Id { get; set; }
-        public int Cost { get; set; }
         public CardColor Color { get; set; }
+        public PlayerType player { get; set; }
+
+        // Spell properties
+        public int Cost { get; set; }
         public Effect Effect { get; set; }
 
+        // Personal properties
         public List<Effect> appliedEffects { get; set; }
         public string Name { get; set; } 
         public int Defence { get; set; }
@@ -98,9 +107,12 @@ namespace Assignment
 
     class Instantaneous : ISpell 
     {
+        // Card properties
         public int Id { get; set; }
-        public int Cost { get; set; }
         public CardColor Color { get; set; }
+        public PlayerType player { get; set; }
+        // Spell properties
+        public int Cost { get; set; }
         public Effect Effect { get; set; }
     }
 

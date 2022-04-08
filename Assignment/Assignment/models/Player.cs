@@ -56,12 +56,12 @@ namespace Assignment
 
         private void PlayPermanent(Permanent permanent){ 
             
-            Permanents.add(permanent);
+            Permanents.Add(permanent);
         }
 
         public void UseLand(int id) {
             foreach(Land l in Lands) {
-                if(l.id == id) {
+                if(l.Id == id) {
                     Energy += l.Use();
                 }
             }
