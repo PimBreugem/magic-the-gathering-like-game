@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-
+using System.Linq;
 namespace Assignment
 {
     public enum CardColor {
@@ -13,17 +13,20 @@ namespace Assignment
         BROWN,
         NONE
     }
+
     public interface ICard
     {
-        public int Id { get; set; }
-        public CardColor Color { get; set; }
-        public PlayerType player { get; set; }
+        int Id { get; set; }
+        string Name { get; set; }
+        CardColor Color { get; set; }
+        PlayerType player { get; set; }
     }
 
-    class Land: ICard
+    public class Land: ICard
     {
         // Card properties
         public int Id { get; set; }
+        public string Name { get; set; }
         public CardColor Color { get; set; }
         public PlayerType player { get; set; }
 
@@ -43,39 +46,56 @@ namespace Assignment
         }
     }
 
-    interface ISpell : ICard
+    public interface ISpell : ICard
     {
        // CardColor color { get; set; }
        // void Play();
         int Cost { get; set; }
-        Effect Effect { get; set; }
     }
 
 
-    class Effect
+    public interface IEffect<T>
+    {
+        int Duration { get; set; }
+        Func<T, T> Action { get; set; }
+
+        T Apply(T p);
+    }
+
+
+    public class PlayerEffect : IEffect<Player>
     {
         public int Duration { get; set; }
-        public Permanent[] Targets { get; set; }
-        public Func<Permanent, Permanent> EntityAction { get; set; }
+        public Func<Player,Player> Action { get; set; }
 
-        public Effect (int dur, Permanent[] tar, Func<Permanent, Permanent> act)
+        public PlayerEffect (int dur, Func<Player, Player> act)
         {
             Duration = dur;
-            Targets = tar;
-            EntityAction = act;
+            Action = act;
         }
 
-        public void apply() {
-            Permanent[] newEntities = new Permanent[Targets.Length];
-            int i = 0;
-            foreach(Permanent e in Targets){
-                newEntities[i] = EntityAction(e);
-            }
-            Targets = newEntities;
+        public Player Apply(Player p){
+            return Action(p);
         }
     }
 
-    class Permanent : ISpell
+    public class PermanentEffect : IEffect<Permanent>
+    {
+        public int Duration { get; set; }
+        public Func<Permanent,Permanent> Action { get; set; }
+
+        public PermanentEffect (int dur, Func<Permanent, Permanent> act)
+        {
+            Duration = dur;
+            Action = act;
+        }
+
+        public Permanent Apply(Permanent p){
+            return Action(p);
+        }
+    }
+
+    public class Permanent : ISpell
     {
         // Card properties
         public int Id { get; set; }
@@ -84,10 +104,10 @@ namespace Assignment
 
         // Spell properties
         public int Cost { get; set; }
-        public Effect Effect { get; set; }
+        public IEffect Effect { get; set; }
 
         // Personal properties
-        public List<Effect> appliedEffects { get; set; }
+        public List<PermanentEffect> appliedEffects { get; set; }
         public string Name { get; set; } 
         public int Defence { get; set; }
         public int Attack { get; set; }
@@ -99,21 +119,22 @@ namespace Assignment
             Attack = att;
         }
 
-        public void AddEffect(Effect effect) {
+        public void AddEffect(PermanentEffect effect) {
             appliedEffects.Add(effect);
         }
 
     }
 
-    class Instantaneous : ISpell 
-    {
+    public class Instantaneous : ISpell
+    { 
         // Card properties
         public int Id { get; set; }
+        public string Name 
         public CardColor Color { get; set; }
         public PlayerType player { get; set; }
         // Spell properties
         public int Cost { get; set; }
-        public Effect Effect { get; set; }
+        public IEffect Effect { get; set; }
     }
 
 }
