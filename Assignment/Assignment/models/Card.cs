@@ -30,25 +30,12 @@ namespace Assignment
             Name = name;
             Color = color;
         }
-        // Personal properties
-        public bool Used { get; set; }
-
-        public int Use() {
-            if(!Used) {
-                Used = true;
-                return 1;
-            }
-            return 0;
-        }
-
-        public void Reset() {
-            Used = false;
-        }
     }
 
     public interface ISpell : ICard
     {
-        int Cost { get; set; }
+        Dictionary<CardColor, int> Cost { get; set; }
+        Effect ActivationEffect { get; set; }
 
     }
 
@@ -56,14 +43,12 @@ namespace Assignment
     {
         public string Name { get; set; }
         public CardColor Color { get; set; }
-        public int Cost { get; set; }
+        public Dictionary<CardColor, int> Cost { get; set; }
         public List<Effect> Effects { get; set; }
         public Effect ActivationEffect { get; set; }
         public int Defence { get; set; }
         public int Attack { get; set; }
-        public bool CanDefend { get; set; }
-
-        public Permanent (string name, CardColor color, int cost, List<Effect> effect, Effect activationEffect, int def, int att)
+        public Permanent (string name, CardColor color, Dictionary<CardColor, int> cost, List<Effect> effect, Effect activationEffect, int def, int att)
         {
             Name = name;
             Color = color;
@@ -72,7 +57,6 @@ namespace Assignment
             ActivationEffect = activationEffect;
             Defence = def;
             Attack = att;
-            CanDefend = true;
         }
     }
 
@@ -80,10 +64,10 @@ namespace Assignment
     { 
         public string Name { get; set; }
         public CardColor Color { get; set; }
-        public int Cost { get; set; }
+        public Dictionary<CardColor, int> Cost { get; set; }
         public Effect ActivationEffect { get; set; }
 
-        public Instantaneous(string name, CardColor color, int cost, Effect activationEffect) 
+        public Instantaneous(string name, CardColor color, Dictionary<CardColor, int> cost, Effect activationEffect) 
         {
             Name = name;
             Color = color;
@@ -97,26 +81,26 @@ namespace Assignment
     public class Effect
     {
         public int? Duration { get; set; }
-        public Boolean TargetOtherPlayer { get; set;}
-        public Func<Permanent> PermanentAction { get; set; }
-        public Func<Player> PlayerAction { get; set; }
-        public Func<Land> LandAction { get; set; }
+        public bool TargetOtherPlayer { get; set;}
+        public Action<Permanent> PermanentAction { get; set; }
+        public Action<Player> PlayerAction { get; set; }
+        public Action<Land> LandAction { get; set; }
 
-        public Effect(int duration, Func<Permanent> permanentAction, Boolean targetOtherPlayer = false)
+        public Effect(int? duration, Action<Permanent> permanentAction, bool targetOtherPlayer = false)
         {
             Duration = duration;
             PermanentAction = permanentAction;
             TargetOtherPlayer = targetOtherPlayer;
         }
     
-        public Effect(int duration, Func<Player> playerAction, Boolean targetOtherPlayer = false)
+        public Effect(int? duration, Action<Player> playerAction, bool targetOtherPlayer = false)
         {
             Duration = duration;
             PlayerAction = playerAction;
             TargetOtherPlayer = targetOtherPlayer;
         }
 
-        public Effect(int duration, Func<Land> landAction, Boolean targetOtherPlayer = false)
+        public Effect(int? duration, Action<Land> landAction, bool targetOtherPlayer = false)
         {
             Duration = duration;
             LandAction = landAction;

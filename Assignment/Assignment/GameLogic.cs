@@ -6,12 +6,12 @@ namespace Assignment
 {
 	public class GameLogic
 	{
-		public Player PlayerOne { get; set; }
-		public Player PlayerTwo { get; set; }
+		public Board Board { get; set; }
+		public Player Winner { get; set; }
 		public GameLogic(string playerOneName, string playerTwoName, int startingHealth, List<ICard> playerOneDeck, List<ICard> playerTwoDeck)
 		{
 			if(CheckDeckRules(playerOneName, playerOneDeck) && CheckDeckRules(playerTwoName, playerTwoDeck)){
-				Board board = new Board();
+				Board = new Board();
 
 				// Shuffeling and drawing starting hand
 				Console.WriteLine("Decks are checked, shuffeling cards...");
@@ -22,52 +22,86 @@ namespace Assignment
 
 				// Starting the game
 				Console.WriteLine("Decks are shuffeld, initializing the game...");
-				PlayerOne = new Player(playerOneName, PlayerType.ONE, startingHealth, ShuffeledPlayerOneDeck, board);
-				PlayerTwo = new Player(playerTwoName, PlayerType.TWO, startingHealth, ShuffeledPlayerTwoDeck, board);
-				board.Player1 = PlayerOne;
-				board.Player2 = PlayerTwo;
+				Board.Player1 = new Player(playerOneName, PlayerType.ONE, startingHealth, ShuffeledPlayerOneDeck);
+				Board.Player2 = new Player(playerTwoName, PlayerType.TWO, startingHealth, ShuffeledPlayerTwoDeck);
 
+				// Start taking turns until someone doesn't have lives
+				var currentType = PlayerType.ONE;
+				while(Winner == null && Board.Player1.PlayerHealth > 0 && Board.Player2.PlayerHealth > 0)
+                {
+					PlayerTurn(currentType);
+					currentType = (currentType == PlayerType.ONE ? PlayerType.TWO : PlayerType.ONE);
+                }
+
+				// Winner is declared
+				if (Winner == null) { Winner = (Board.Player1.PlayerHealth > 0 ? Board.Player1 : Board.Player2); }
+				Console.WriteLine($"PLayer {Winner.Name} won the game!");
 			}
 		}
 
 		public void PlayerTurn(PlayerType playerType)
         {
-			Player CurrentPlayer = (PlayerOne.Type == playerType ? PlayerOne : PlayerTwo);
+			Player CurrentPlayer = (Board.Player1.Type == playerType ? Board.Player1 : Board.Player2);
+			Player OpponentPlayer = (Board.Player1.Type != playerType ? Board.Player1 : Board.Player2);
 
-			// Preparation
-			foreach(Land land in CurrentPlayer.Lands) { land.Reset(); } //Reset all lands
-			foreach(PermanentOnField permanentOnField in CurrentPlayer.Permanents) // Reset all the the states of permanents
-			{
-				permanentOnField.Attack = permanentOnField.Permanent.Attack;
-				permanentOnField.Defence = permanentOnField.Permanent.Defence;
-				permanentOnField.AppliedEffects = null;
-				permanentOnField.Permanent.CanDefend = true;
+			// START OF PREPERATION FASE
+			foreach (LandOnBoard land in CurrentPlayer.Lands) { land.Reset(); } //Reset all the lands
 
-				// Check all effects
-				foreach(Effect effect in permanentOnField.Permanent.Effects) // Check if all the permanent's effects are still valid: use case can be that when a permanent spaws the first 3 turns it has a buff
-                {
-					if(effect.Duration != null || effect.Duration-- <= 0)
-                    {
-						permanentOnField.Permanent.Effects.Remove(effect);
-                    }
-                }
-			}
-			foreach(PermanentOnField permanentOnField in CurrentPlayer.Permanents) // Add all the effects of each permanent to the field
+			// If Effects expire remove them from both yourself or opponent effects
+			List<Effect> RemoveOwnEffects = new List<Effect>();
+			List<Effect> RemoveOpponentEffects = new List<Effect>();
+			foreach (PermanentOnBoard permanent in CurrentPlayer.Permanents)
             {
-				foreach(Effect effect in permanentOnField.Permanent.Effects)
+				foreach(Effect effect in permanent.Permanent.Effects)
                 {
-					if(effect.PermanentAction != null)
+					if(effect.Duration != null)
                     {
-						// Run effect on all permanent in the field including the other players
-
+						if(effect.Duration-- <= 0)
+                        {
+							if (!effect.TargetOtherPlayer) { RemoveOwnEffects.Add(effect); }
+							else { RemoveOpponentEffects.Add(effect); }
+                        }
                     }
                 }
             }
 
+			// Save remove all efects in remove own effects
+			foreach (PermanentOnBoard permanent in CurrentPlayer.Permanents)
+            {
+				foreach(Effect effect in RemoveOwnEffects)
+                {
+					if (permanent.RemoveEffectIfExists(effect)) { break; } // Only remove one effect
+				}
+            }
+
+			// Save remove all effects in remove opponent effects
+			foreach (PermanentOnBoard permanent in OpponentPlayer.Permanents)
+            {
+				foreach(Effect effect in RemoveOpponentEffects)
+                {
+                    if (permanent.RemoveEffectIfExists(effect)) { break; } // Only remove one effect
+
+				}
+			} // END OF PREPERATION FASE
+
+
+			// DRAWING FASE
+			if (!CurrentPlayer.DrawCard())
+            {
+				Winner = OpponentPlayer;
+				return;
+            }
+
+			// START OF MAIN PHASE
+			/* This is where we cannot automate implementation further 
+			 
+			Player can choose the cards he or she want to play
+			
+			 */
 
         }
 
-		public Boolean CheckDeckRules(string playerName, List<ICard> deck)
+		public bool CheckDeckRules(string playerName, List<ICard> deck)
         {
 			Console.WriteLine($"Checking the deck of {playerName}...");
 			if(deck.Count != 37)
