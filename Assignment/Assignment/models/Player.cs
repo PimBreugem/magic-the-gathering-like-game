@@ -14,6 +14,7 @@ namespace Assignment
         public Stack<ICard> DiscardPile { get; set; }
         public List<Permanent> Permanents { get; set; }
         public List<Land> Lands { get; set; }
+        public List<Effect> AppliedEffects { get; set; S}
         public Board BoardRef { get; set; }
 
         public Player(string name, PlayerType type, int health, Stack<ICard> deck, Board board){
@@ -27,7 +28,32 @@ namespace Assignment
             Permanents = new List<Permanent>();
             Lands = new List<Land>();
             BoardRef = board;
+            AppliedEffects = new List<Effect>();
             Draw(7);
+        }
+
+        public Player(
+                string name, 
+                PlayerType type, 
+                int energy, 
+                int health, 
+                List<ICard> deck, 
+                List<ICard> hand, 
+                Stack<ICard> discardPile, 
+                List<Permanent> permanents,
+                List<Land> lands,
+                Board board){
+            Name = name;
+            Type = type;
+            Energy = energy;
+            PlayerHealth = health;
+            Deck = deck;
+            Hand = hand;
+            DiscardPile = discardPile;
+            Permanents = permanents;
+            Lands = lands;
+            BoardRef = board;
+            AppliedEffects = new List<Effect>();
         }
 
         public void Draw(int num=1) {
@@ -80,6 +106,15 @@ namespace Assignment
                     Energy += l.Use();
                 }
             }
+        }
+
+        public Player WithEffects() 
+        {
+            Player res = new Player(Name,Type,Energy,Health,Deck,Hand,DiscardPile,Permanents,Lands,Board);
+            foreach(Effect e in AppliedEffects){
+                res = e.PlayerAction(res);
+            }
+            return res;
         }
     }
 

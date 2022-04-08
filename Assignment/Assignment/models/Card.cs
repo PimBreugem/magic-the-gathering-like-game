@@ -45,6 +45,15 @@ namespace Assignment
         public void Reset() {
             Used = false;
         }
+
+        public Land WithEffects() 
+        {
+            Land res = new Land(Name,Color);
+            foreach(Effect e in AppliedEffects){
+                res = e.LandAction(res);
+            }
+            return res;
+        }
     }
 
     public interface ISpell : ICard
@@ -78,6 +87,14 @@ namespace Assignment
             CanDefend = true;
             AppliedEffects = new List<Effect>();
         }
+
+        public Permanent WithEffects(){
+            Permanent res = new Permanent(Name,Color,Cost,Effect,ActivationEffect,Defence,Attack);
+            foreach(Effect e in AppliedEffects){
+                res = e.PermanentAction(res);
+            }
+            return res;
+        }
     }
 
     public class Instantaneous : ISpell
@@ -101,28 +118,33 @@ namespace Assignment
     public class Effect
     {
         public int Duration { get; set; }
-        public Func<Permanent> PermanentAction { get; set; }
-        public Func<Player> PlayerAction { get; set; }
-        public Func<Land> LandAction { get; set; }
+        public string Affects { get; set; }
+        public Func<Permanent,Permanent> PermanentAction { get; set; }
+        public Func<Player,Player> PlayerAction { get; set; }
+        public Func<Land,Land> LandAction { get; set; }
 
-        public Effect(int duration, Func<Permanent> permanentAction)
+        public Effect(int duration, Func<Permanent,Permanent> permanentAction)
         {
             Duration = duration;
             PermanentAction = permanentAction;
+            Affects = "permanent";
         }
     
-        public Effect(int duration, Func<Player> playerAction)
+        public Effect(int duration, Func<Player,Player> playerAction)
         {
             Duration = duration;
             PlayerAction = playerAction;
+            Affects = "player";
+
         }
 
-        public Effect(int duration, Func<Land> landAction)
+        public Effect(int duration, Func<Land,Land> landAction)
         {
             Duration = duration;
             LandAction = landAction;
+            Affects = "land";
+
         }
-    
     }
 
 }
