@@ -19,7 +19,14 @@ namespace Assignment
         CardColor Color { get; set; }
     }
 
-    public class Land: ICard
+    public interface ITarget
+    {
+        List<Effect> AppliedEffects { get; set; }
+
+        void AddEffect(Effect effect);
+    }
+
+    public class Land: ICard, ITarget
     {
         public string Name { get; set; }
         public CardColor Color { get; set; }
@@ -54,6 +61,10 @@ namespace Assignment
             }
             return res;
         }
+
+        public void AddEffect(Effect effect){
+            AppliedEffects.Add(effect);
+        }
     }
 
     public interface ISpell : ICard
@@ -63,7 +74,7 @@ namespace Assignment
 
     }
 
-    public class Permanent : ISpell
+    public class Permanent : ISpell, ITarget
     {
         public string Name { get; set; }
         public CardColor Color { get; set; }
@@ -94,6 +105,10 @@ namespace Assignment
                 res = e.PermanentAction(res);
             }
             return res;
+        }
+
+        public void AddEffect(Effect effect){
+            AppliedEffects.Add(effect);
         }
     }
 

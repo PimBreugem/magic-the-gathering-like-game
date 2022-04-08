@@ -24,6 +24,10 @@ namespace Assignment
             };
         }
 
+        public List<Permanent> GetAllPermanents(){
+            return GetPermanentsOfPlayer(PlayerType.ONE).Concat(GetPermanentsOfPlayer(PlayerType.TWO)).ToList();
+        }
+
         public Player GetPlayer(PlayerType type)
         {
             return type switch
