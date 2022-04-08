@@ -6,11 +6,11 @@ using System.Linq;
 namespace Assignment
 {
     public enum CardColor {
-        RED,
-        WHITE,
-        GREEN,
-        BLUE,
-        BROWN
+        Red,
+        White,
+        Green,
+        Blue,
+        Brown
     }
 
     public interface ICard

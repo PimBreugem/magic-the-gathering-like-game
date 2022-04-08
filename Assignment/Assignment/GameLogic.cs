@@ -26,7 +26,6 @@ namespace Assignment
 				PlayerTwo = new Player(playerTwoName, PlayerType.TWO, startingHealth, ShuffeledPlayerTwoDeck, board);
 				board.Player1 = PlayerOne;
 				board.Player2 = PlayerTwo;
-
 			}
 		}
 		public Boolean CheckDeckRules(string playerName, List<ICard> deck)
@@ -61,6 +60,10 @@ namespace Assignment
 			}
 
 			return true;
+		}
+
+		public void Demo(){
+			
 		}
 	}
 	public static class Extensions

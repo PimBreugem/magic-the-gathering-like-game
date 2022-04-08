@@ -58,7 +58,7 @@ namespace Assignment
         }
 
         public void Draw(int num=1) {
-            Console.WriteLine($"Player {Name}: Draws {(num == 1 ? "a" : num.ToString())} card{(num == 1 ? "" : "s")}");
+            Print($"Draws {(num == 1 ? "a" : num.ToString())} card{(num == 1 ? "" : "s")}");
             while(num-- > 0 && Deck.Count > 0)
             {
                 Hand.Add(Deck.Pop());
@@ -66,7 +66,6 @@ namespace Assignment
         }
 
         public void Play(ICard card) {
-            Console.WriteLine("playing card");
             if(card is Land) {
                 PlayLand((Land)card);
             }
@@ -80,7 +79,16 @@ namespace Assignment
             Hand.Remove(card);
         }
 
+        public void ResetLands(){
+
+            foreach(Land l in Lands)
+            {
+                l.Reset();
+            }
+        }
+
         private void PlayLand(Land land) {
+            Print($"plays a {land.Color} Land");
             land.Used = true;
             Lands.Add(land);
         }
@@ -95,6 +103,8 @@ namespace Assignment
         private void PlayInstantaneous(Instantaneous instantaneous, List<ITarget> targets)
         {
             //add effects
+            Print($"plays a [{instantaneous.Color} instant] {instantaneous.Name}");
+
             SubtractEnergy(instantaneous.Cost);
 
             foreach(ITarget t in targets) {
@@ -105,6 +115,8 @@ namespace Assignment
         }
 
         private void PlayPermanent(Permanent permanent){ 
+            Print($"plays a [{permanent.Color} permanent] {permanent.Name}");
+
             SubtractEnergy(permanent.Cost);
             Permanents.Add(permanent);
         }
@@ -123,6 +135,18 @@ namespace Assignment
                 res = e.PlayerAction(res);
             }
             return res;
+        }
+
+
+        public void PrintPlayerState(){
+            Player withEffects = this.WithEffects();
+            Print("");
+            Print($"Cards: [Deck:${Deck.Count}, Hand:${Hand.Count}, DiscardPile:${DiscardPile.Count}]");
+            Print($"Permanents: (name,attack,defense)");
+            foreach(Permanent p in Permanents){
+                Print($"    ({p.Name},{p.Attack},{p.Defence})");
+            }
+            Print($"Unused Lands: {withEffects.Lands.Count(l => !l.Used)}");
         }
 
         public bool EnoughEnergy(Dictionary<CardColor,int> cost) {
@@ -145,6 +169,12 @@ namespace Assignment
 
         public void AddEffect(Effect effect){
             AppliedEffects.Add(effect);
+        }
+
+        public void Print(string s)
+        {
+            int playerNo = Type == PlayerType.ONE ? 1 : 2;
+            Console.WriteLine($"[Player {playerNo}, {Name}] {s}");
         }
     }
 
