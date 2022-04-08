@@ -32,9 +32,9 @@ namespace Assignment
 		public Boolean CheckDeckRules(string playerName, List<ICard> deck)
         {
 			Console.WriteLine($"Checking the deck of {playerName}...");
-			if(deck.Count != 60)
+			if(deck.Count != 37)
             {
-				throw new Exception($"Invalid Deck of {playerName}: Deck should contain 60 cards");
+				throw new Exception($"Invalid Deck of {playerName}: Deck should contain 37 cards");
             }
 
 			// Cards can have only 3 copies in each deck, we think with an exception on lands... Not specified in the assignment
